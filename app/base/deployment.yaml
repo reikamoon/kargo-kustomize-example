@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kargo-kustomize
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kargo-kustomize
+  template:
+    metadata:
+      labels:
+        app: kargo-kustomize
+      containers:
+      - name: alpine 
+        image: ghcr.io/reikamoon/guestbook
+      volumes:
+      - name: content
+        configMap:
+          name: kargo-kustomize-content
