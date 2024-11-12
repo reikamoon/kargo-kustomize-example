@@ -28,12 +28,12 @@ spec:
       - uses: kustomize-set-image
         as: update-image
         config:
-          path: app/env/test
+          path: ./src/app/base
           images:
           - image: ghcr.io/reikamoon/guestbook
       - uses: kustomize-build
         config:
-          path: app/env/test
+          path: ./src/app/env/test
           outPath: ./out/manifests.yaml
       - uses: git-commit
         as: commit
@@ -45,13 +45,6 @@ spec:
         config:
           path: ./out
           targetBranch: stage/test
-      - uses: argocd-update
-        config:
-          apps:
-          - name: kargo-kustomize-demo-test
-            sources:
-            - repoURL: https://github.com/reikamoon/kargo-kustomize-example.git
-              desiredCommitFromStep: commit
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -86,7 +79,7 @@ spec:
         config:
           images:
           - image: ghcr.io/reikamoon/guestbook
-            path: app/env/test
+            path: ../src/app/base
       - uses: kustomize-build
         config:
           path: ./src/stages/uat
@@ -101,13 +94,6 @@ spec:
         config:
           path: ./out
           targetBranch: stage/uat
-      - uses: argocd-update
-        config:
-          apps:
-          - name: kargo-kustomize-demo-uat
-            sources:
-            - repoURL: https://github.com/reikamoon/kargo-kustomize-example.git
-              desiredCommitFromStep: commit
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -131,7 +117,7 @@ spec:
           checkout:
           - branch: main
             path: ./src
-          - branch: app/env/prod
+          - branch: stage/prod
             create: true
             path: ./out
       - uses: git-clear
@@ -145,7 +131,7 @@ spec:
           - image: public.ecr.aws/docker/library/alpine:3
       - uses: kustomize-build
         config:
-          path: app/env/prod
+          path: ./src/stages/prod
           outPath: ./out/manifests.yaml
       - uses: git-commit
         as: commit
@@ -157,10 +143,3 @@ spec:
         config:
           path: ./out
           targetBranch: stage/prod
-      - uses: argocd-update
-        config:
-          apps:
-          - name: kargo—kustomize-example-prod
-            sources:
-            - repoURL: https://github.com/reikamoon/kargo-kustomize-example.git
-              desiredCommitFromStep: commit
