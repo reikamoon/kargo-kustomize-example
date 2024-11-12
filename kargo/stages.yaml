@@ -86,7 +86,7 @@ spec:
         config:
           images:
           - image: ghcr.io/reikamoon/guestbook
-            path: dev/kustomize
+            path: app/env/test
       - uses: kustomize-build
         config:
           path: ./src/stages/uat
@@ -131,7 +131,7 @@ spec:
           checkout:
           - branch: main
             path: ./src
-          - branch: stage/prod
+          - branch: app/env/prod
             create: true
             path: ./out
       - uses: git-clear
@@ -145,7 +145,7 @@ spec:
           - image: public.ecr.aws/docker/library/alpine:3
       - uses: kustomize-build
         config:
-          path: ./src/stages/prod
+          path: app/env/prod
           outPath: ./out/manifests.yaml
       - uses: git-commit
         as: commit
